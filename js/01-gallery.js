@@ -14,24 +14,23 @@ gallery.insertAdjacentHTML("beforeend", galleryItemsRef);
 
 gallery.addEventListener("click", selectGalleryEl);
 
+const instance = basicLightbox.create(`<img src="" alt="">`, {
+  onShow: () => document.addEventListener("keydown", onKeydownEsc),
+  onClose: () => document.removeEventListener("keydown", onKeydownEsc),
+});
+
 function selectGalleryEl(event) {
   event.preventDefault();
   if (event.target.nodeName !== "IMG") {
     return;
   }
-
-  // ниже выражение взятое с сайта https://basiclightbox.electerious.com/
-  // instance - их название. При showпоказывается ссылка из тега img. При close - закрывается модалка по Esc
-  const instance = basicLightbox.create(`
-    <img src="${event.target.dataset.source}">`);
-  //<img src='${event.target.getAttribute(["data-source"])>`);
-  // console.log(event.target);
+  const image = instance.element().querySelector("img");
+  image.src = event.target.dataset.source;
+  image.alt = event.target.alt;
   instance.show();
-
-  const onKeydownEsc = (event) => {
-    if (event.key === "Escape") {
-      instance.close();
-    }
-  };
-  window.addEventListener("keydown", onKeydownEsc);
+}
+function onKeydownEsc(event) {
+  if (event.key === "Escape") {
+    instance.close();
+  }
 }
